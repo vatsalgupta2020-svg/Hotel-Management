@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVA Hotel Services - Experience Comfort and Luxury</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Lucide icons script (ye offline fail ho sakta hai, jo ab handle kar liya gaya hai) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            /* Dark Navy Background */
+            color: #D1D5DB;
+            /* Light gray text */
+        }
+        
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .bg-dark-secondary {
+            background-color: #1F2937;
+            /* Slightly lighter navy */
+        }
+        
+        .hero-bg {
+            background-image: linear-gradient(rgba(17, 24, 39, 0.6), rgba(17, 24, 39, 0.6)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .search-card {
+            background: rgba(31, 41, 55, 0.2);
+            /* Transparent secondary dark */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(209, 173, 94, 0.3);
+        }
+        
+        .nav-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-icon:hover {
+            transform: scale(1.1);
+            color: #D1AD5E;
+            /* Gold accent color on hover */
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(209, 173, 94, 0.1), 0 4px 6px -2px rgba(209, 173, 94, 0.07);
+        }
+        
+        .btn-primary {
+            background-color: #D1AD5E;
+            /* Gold button */
+            color: #111827;
+            /* Dark text on gold button */
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: #E6C683;
+            /* Lighter gold on hover */
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #D1AD5E;
+            border: 1px solid #D1AD5E;
+            font-weight: 600;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(209, 173, 94, 0.1);
+        }
+        
+        .ring-accent:focus {
+            --tw-ring-color: #D1AD5E;
+        }
+        
+        .text-accent {
+            color: #D1AD5E;
+        }
+        
+        .hover\:text-accent:hover {
+            color: #D1AD5E;
+        }
+        /* Shared modal styles */
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            /* Start hidden for transition */
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-content {
+            background-color: #1F2937;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 48rem;
+            /* Default max-width */
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(209, 173, 94, 0.3);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-20px);
+            /* Start off-screen for transition */
+            transition: transform 0.3s ease;
+        }
+        /* Specific width for registration modal */
+        
+        #registration-modal .modal-content {
+            max-width: 32rem;
+            /* 512px */
+        }
+        
+        .loader {
+            border: 4px solid #374151;
+            /* gray-700 */
+            border-top: 4px solid #D1AD5E;
+            /* text-accent */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        /* Styles for new input fields to match the dark theme */
+        
+        .form-input-dark {
+            width: 100%;
+            background-color: #374151;
+            /* gray-700 */
+            color: white;
+            placeholder-gray-400;
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            padding: 0.75rem 1rem;
+            /* py-3 px-4 */
+            border: 1px solid #4B5563;
+            /* gray-600 */
+            outline: none;
+        }
+        
+        .form-input-dark:focus {
+            --tw-ring-color: #D1AD5E;
+            box-shadow: 0 0 0 2px var(--tw-ring-color);
+            border-color: #D1AD5E;
+        }
+        /* Fix for date input placeholder color */
+        
+        .form-input-dark::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        /* Show placeholder text color when date is not set */
+        
+        .form-input-dark[type="date"]:invalid,
+        .form-input-dark[type="date"]::-webkit-datetime-edit-year-field,
+        .form-input-dark[type="date"]::-webkit-datetime-edit-month-field,
+        .form-input-dark[type="date"]::-webkit-datetime-edit-day-field {
+            color: #9CA3AF;
+            /* gray-400 */
+        }
+        /* Set text to white once a valid date is selected */
+        
+        .form-input-dark[type="date"]:valid {
+            color: white;
+        }
+        /* Simple prose styles for AI content */
+        
+        .prose-invert h1,
+        .prose-invert h2,
+        .prose-invert h3 {
+            color: white;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .prose-invert h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+        
+        .prose-invert h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .prose-invert h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .prose-invert p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #D1D5DB;
+        }
+        
+        .prose-invert ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: #D1D5DB;
+        }
+        
+        .prose-invert li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .prose-invert strong {
+            color: #E6C683;
+        }
+        
+        .prose-invert em {
+            color: #D1D5DB;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body class="text-gray-300">
+
+    <header class="bg-dark-secondary shadow-lg fixed w-full z-20 top-0">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="flex items-center text-xl font-bold text-white">
+                <img src="https://placehold.co/100x100/1F2937/D1AD5E?text=AVA&font=playfairdisplay" alt="AVA Hotel Services Logo" class="h-24 w-24 mr-4 rounded-full">
+                <span class="font-serif text-2xl">AVA Hotel Services</span>
+            </a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#" class="text-gray-300 hover:text-accent transition">Home</a>
+                <a href="#register" class="text-gray-300 hover:text-accent transition">Register</a>
+                <a href="#" class="text-gray-300 hover:text-accent transition">About Us</a>
+                <a href="#" class="text-gray-300 hover:text-accent transition">Contact</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="btn-primary px-5 py-2 rounded-lg transition shadow-md">Sign In</button>
+                <button class="md:hidden text-white">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-36">
+        <section class="hero-bg min-h-[70vh] flex items-center justify-center text-white py-12">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4">Experience Unforgettable Stays</h1>
+                <p class="text-lg md:text-xl mb-8">Find the perfect blend of comfort and luxury.</p>
+
+                <div class="container mx-auto px-4">
+                    <div class="search-card p-4 md:p-6 rounded-xl shadow-lg max-w-5xl mx-auto">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+
+                            <!-- Destination Input -->
+                            <div class="relative">
+                                <i data-lucide="map-pin" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input id="destination-input" type="text" placeholder="Where are you going?" class="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 ring-accent border border-gray-600">
+                            </div>
+
+                            <!-- Check-in Date -->
+                            <div class="relative">
+                                <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input id="hero-check-in" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Check-in Date" class="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 ring-accent border border-gray-600 form-input-dark"
+                                    required>
+                            </div>
+
+                            <!-- Check-out Date -->
+                            <div class="relative">
+                                <i data-lucide="calendar-off" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input id="hero-check-out" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Check-out Date" class="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 ring-accent border border-gray-600 form-input-dark"
+                                    required>
+                            </div>
+
+                            <!-- Guests Input -->
+                            <div class="relative">
+                                <i data-lucide="users" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input id="hero-guests" type="text" placeholder="2 adults, 0 children" class="w-full bg-gray-700 text-white placeholder-gray-400 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 ring-accent border border-gray-600">
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-4">
+
+                            <!-- Search Button -->
+                            <button id="search-hotels-btn" class="w-full md:w-1/2 btn-primary px-8 py-3 rounded-lg transition shadow-lg font-semibold flex items-center justify-center">
+                                <i data-lucide="search" class="w-5 h-5 mr-2"></i>
+                                Search Hotels
+                            </button>
+                            <!-- Plan Trip Button -->
+                            <button id="plan-trip-btn" class="w-full md:w-1/2 btn-secondary px-8 py-3 rounded-lg transition shadow-lg font-semibold flex items-center justify-center">
+                                ✨ Plan My Trip
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-dark-secondary py-8 -mt-12 relative z-10 mx-4 md:mx-auto max-w-4xl rounded-xl shadow-lg">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-6 text-center text-gray-300">
+                    <a href="#register" class="flex flex-col items-center space-y-2 nav-icon">
+                        <i data-lucide="calendar-check"></i>
+                        <span class="font-medium">Availability</span>
+                    </a>
+                    <a href="#" class="flex flex-col items-center space-y-2 nav-icon">
+                        <i data-lucide="info"></i>
+                        <span class="font-medium">About Us</span>
+                    </a>
+                    <a href="#" class="flex flex-col items-center space-y-2 nav-icon">
+                        <i data-lucide="user"></i>
+                        <span class="font-medium">Profile</span>
+                    </a>
+                    <a href="#" class="flex flex-col items-center space-y-2 nav-icon">
+                        <i data-lucide="star"></i>
+                        <span class="font-medium">Favorites</span>
+                    </a>
+                    <a href="#" class="flex flex-col items-center space-y-2 nav-icon col-span-2 md:col-span-1">
+                        <i data-lucide="map"></i>
+                        <span class="font-medium">Locations</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Backend Info Panel -->
+        <section class="py-12 bg-gray-900">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <div class="bg-dark-secondary border border-gray-700 text-gray-300 p-4 rounded-lg shadow-lg border-l-4 border-l-accent">
+                    <h3 class="font-bold text-sm text-white flex items-center">
+                        <i data-lucide="database" class="w-4 h-4 mr-2 text-accent"></i> Backend Connection Details
+                    </h3>
+                    <p class="text-xs mt-2">
+                        <strong>App ID:</strong> <span id="app-id-display">Connecting...</span>
+                    </p>
+                    <p class="text-xs mt-1">
+                        <strong>Your User ID:</strong> <span id="user-id-display">Connecting...</span>
+                    </p>
+                    <p class="text-xs mt-2 italic text-gray-400">Your hotel registrations are saved privately to your User ID.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Registration Section -->
+        <section id="register" class="py-16 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-serif font-bold mb-12 text-center text-white">Register For A Hotel</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+
+                    <!-- Available Hotels -->
+                    <div class="lg:col-span-2 bg-dark-secondary p-6 rounded-2xl shadow-lg border border-gray-700">
+                        <h3 class="text-2xl font-serif font-semibold mb-6 border-b border-gray-700 pb-3 text-white">Available Hotels</h3>
+                        <div id="hotel-listings-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Hotels will be injected here by JavaScript -->
+                        </div>
+                    </div>
+
+
+                    <!-- My Registrations -->
+                    <div class="bg-dark-secondary p-6 rounded-2xl shadow-lg h-fit border border-gray-700">
+                        <h3 class="text-2xl font-serif font-semibold mb-6 border-b border-gray-700 pb-3 text-white">My Registrations (Online)</h3>
+                        <div id="my-registrations-container" class="space-y-4">
+
+                            <!-- Default "no bookings" message -->
+                            <p id="no-bookings-msg" class="text-gray-400 text-center p-4">You have no registrations yet.</p>
+                            <!-- Bookings will be injected here by JavaScript -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Trending Destinations -->
+        <section class="py-16 bg-dark-secondary">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-serif font-bold mb-8 text-center text-white">Trending Destinations</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-gray-900 rounded-lg shadow-md overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop" alt="Luxury Resort in India" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl text-white mb-2">India</h3>
+                            <p class="text-gray-400">Indulge in opulent resorts and experience world-class hospitality.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg shadow-md overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop" alt="Tokyo" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl text-white mb-2">Tokyo</h3>
+                            <p class="text-gray-400">A dazzling metropolis where ancient traditions meet futuristic technology.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg shadow-md overflow-hidden card-hover">
+                        <img src="https://images.unsplash.com/photo-1560703650-ef3e0f254ae0?q=80&w=1974&auto=format&fit=crop" alt="Santorini" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl text-white mb-2">Santorini</h3>
+                            <p class="text-gray-400">Breathtaking sunsets and iconic white-washed villages in Greece.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Explore Our Hotels -->
+        <section class="py-16 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-serif font-bold mb-8 text-center text-white">Explore Our Hotels</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="relative rounded-lg overflow-hidden card-hover h-64">
+                        <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=1949&auto=format&fit=crop" alt="Beach Resorts" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
+                            <h3 class="text-white font-bold text-2xl">Beach Resorts</h3>
+                        </div>
+                    </div>
+                    <div class="relative rounded-lg overflow-hidden card-hover h-64">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop" alt="City Escapes" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
+                            <h3 class="text-white font-bold text-2xl">City Escapes</h3>
+                        </div>
+                    </div>
+                    <div class="relative rounded-lg overflow-hidden card-hover h-64">
+                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop" alt="Mountain Retreats" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
+                            <h3 class="text-white font-bold text-2xl">Mountain Retreats</h3>
+                        </div>
+                    </div>
+                    <div class="relative rounded-lg overflow-hidden card-hover h-64">
+                        <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=2070&auto=format&fit=crop" alt="Luxury Suites" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
+                            <h3 class="text-white font-bold text-2xl">Luxury Suites</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="py-20 bg-dark-secondary">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-serif font-bold mb-12 text-center text-white">Why Choose AVA Hotel Services?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-gray-900 p-4 rounded-full mb-4 shadow-sm">
+                            <i data-lucide="concierge-bell" class="w-8 h-8 text-accent"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-white mb-2">24/7 Concierge</h3>
+                        <p class="text-gray-400">Our dedicated team is always available to assist you with any request.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-gray-900 p-4 rounded-full mb-4 shadow-sm">
+                            <i data-lucide="gem" class="w-8 h-8 text-accent"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-white mb-2">Best Price Guarantee</h3>
+                        <p class="text-gray-400">Find the best rates for your dream vacation, guaranteed.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-gray-900 p-4 rounded-full mb-4 shadow-sm">
+                            <i data-lucide="shield-check" class="w-8 h-8 text-accent"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-white mb-2">Secure Booking</h3>
+                        <p class="text-gray-400">Your privacy and security are our top priorities. Book with confidence.</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-gray-900 p-4 rounded-full mb-4 shadow-sm">
+                            <i data-lucide="wifi" class="w-8 h-8 text-accent"></i>
+                        </div>
+                        <h3 class="font-bold text-xl text-white mb-2">Free Wi-Fi</h3>
+                        <p class="text-gray-400">Stay connected with complimentary high-speed internet access.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black text-white pt-16 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+
+                <!-- Footer Column 1 -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-accent">AVA Hotel Services</h4>
+                    <p class="text-gray-400">Your gateway to unforgettable travel experiences. Discover and book unique accommodations worldwide.</p>
+                    <h5 class="font-semibold text-md mt-6 mb-3">Our Founders</h5>
+                    <ul class="space-y-1 text-gray-400 text-sm">
+                        <li>Ashish Kumar</li>
+                        <li>Vatsal Gupta</li>
+                        <li>Aditya Dutta</li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 2 -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Press</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 3 -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+
+                    <!-- Founders list also in Support column -->
+                    <h5 class="font-semibold text-md mt-6 mb-3">Founders</h5>
+                    <ul class="space-y-1 text-gray-400 text-sm">
+                        <li>Ashish Kumar</li>
+                        <li>Vatsal Gupta</li>
+                        <li>Aditya Dutta</li>
+                    </ul>
+                </div>
+
+                <!-- Footer Column 4 -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Stay Connected</h4>
+                    <p class="text-gray-400 mb-4">Subscribe to our newsletter for the latest deals and updates.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="w-full bg-gray-800 text-white rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 ring-accent border border-gray-700">
+                        <button class="btn-primary px-4 rounded-r-lg transition">Go</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-center text-gray-400">
+                <p>&copy; 2025 AVA Hotel Services. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-accent transition"><i data-lucide="facebook"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i data-lucide="twitter"></i></a>
+                    <a href="#" class="hover:text-accent transition"><i data-lucide="instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- AI Planner Modal -->
+    <div id="ai-planner-modal" class="modal-overlay" style="opacity: 0;">
+        <div class="modal-content" style="transform: translateY(-20px);">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-serif font-bold text-white">✨ Your Personalized Itinerary</h2>
+                <button id="close-ai-modal-btn" class="text-gray-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="itinerary-content">
+                <!-- AI Itinerary will be injected here -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Registration Modal -->
+    <div id="registration-modal" class="modal-overlay" style="opacity: 0;">
+        <div class="modal-content" style="transform: translateY(-20px);">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-serif font-bold text-white">Register for: <span id="reg-modal-hotel-name" class="text-accent"></span></h2>
+                <button id="close-reg-modal-btn" class="text-gray-400 hover:text-white transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="registration-form">
+                <input type="hidden" id="reg-modal-hotel-id">
+                <input type="hidden" id="reg-modal-hotel-price">
+                <div class="mb-4">
+                    <label for="check-in-date" class="block text-sm font-medium text-gray-300 mb-2">Check-in Date</label>
+                    <input type="date" id="check-in-date" required class="form-input-dark">
+                </div>
+                <div class="mb-6">
+                    <label for="check-out-date" class="block text-sm font-medium text-gray-300 mb-2">Check-out Date</label>
+                    <input type="date" id="check-out-date" required class="form-input-dark">
+                </div>
+                <button type="submit" id="confirm-booking-btn" class="w-full btn-primary px-8 py-3 rounded-lg transition shadow-lg font-semibold flex items-center justify-center">
+                    Confirm Registration
+                </button>
+                <p id="reg-modal-message" class="text-sm text-center mt-4"></p>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- MAIN JAVASCRIPT & BACKEND LOGIC -->
+    <script type="module">
+        // --- YE SCRIPT AB OFFLINE-FIRST CHALEGA --- // --- Globals --- let db, auth, userId; // Firebase functions ko global banayein taaki woh assign ho sakein let addDoc, collection, onSnapshot, setLogLevel; let allHotels = []; // Hotel list store karne ke
+        liye // Config variables (environment se aayengi) const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}'); const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-ava-hotel-app'; // ---
+        OFFLINE HOTEL LIST (FOR DEMO) --- const sampleHotels = [ { name: "AVA Grand Starlight", location: "New York, NY", pricePerNight: 350, rating: 4.8, image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto.format&fit=crop"
+        }, { name: "AVA Ocean Breeze", location: "Miami, FL", pricePerNight: 450, rating: 4.9, image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto.format&fit=crop" }, { name: "AVA Mountain Lodge", location: "Aspen, CO",
+        pricePerNight: 550, rating: 4.7, image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto.format&fit=crop" }, { name: "AVA Cityscape Inn", location: "Chicago, IL", pricePerNight: 280, rating: 4.5, image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto.format&fit=crop"
+        }, { name: "AVA Hotel Chennai", location: "Chennai, IN", pricePerNight: 220, rating: 4.6, image: "https://images.unsplash.com/photo-1561501900-3701fa6a0864?q=80&w=2070&auto=format&fit=crop" }, { name: "AVA Étoile", location: "Paris, FR", pricePerNight:
+        620, rating: 4.9, image: "https://images.unsplash.com/photo-1502602898657-3e91760c0341?q=80&w=2070&auto=format&fit=crop" }, { name: "AVA Desert Jewel", location: "Dubai, UAE", pricePerNight: 750, rating: 5.0, image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"
+        }, { name: "AVA Sakura Sky", location: "Tokyo, JP", pricePerNight: 480, rating: 4.8, image: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop" } ]; // --- DOM Element Globals --- let hotelListingsContainer,
+        myRegistrationsContainer, noBookingsMsg; let regModal, closeRegModalBtn, regForm, regModalHotelName, regModalHotelId; let regModalHotelPrice, checkInInput, checkOutInput, regModalMessage, confirmBookingBtn; let searchHotelsBtn, heroCheckInInput,
+        heroCheckOutInput; let planTripBtn, aiModal, closeAiModalBtn, itineraryContent, destinationInput; // --- FIX: Naya helper function jo safely icons create karega --- function safeCreateIcons() { if (typeof lucide !== 'undefined' && lucide.createIcons)
+        { try { lucide.createIcons(); } catch (error) { console.warn("Lucide icon creation failed:", error); } } else { console.warn("Lucide library not loaded. Skipping icon creation."); } } // --- OFFLINE-FIRST FUNCTIONS (Ye hamesha chalengi) --- //
+        Offline hotel list ko page par load karta hai function loadOfflineHotels() { if (!hotelListingsContainer) { console.error("hotelListingsContainer is not defined!"); return; } if (sampleHotels.length === 0) { hotelListingsContainer.innerHTML =
+        '
+        <p class="text-gray-400 text-center md:col-span-2">No hotels found.</p>'; allHotels = []; return; } allHotels = sampleHotels.map((hotel, index) => ({ id: `offline-${index}`, ...hotel })); renderHotelList(allHotels); // Poori list ko render karein } // Hotel list ko render karta hai function renderHotelList(hotels)
+        { hotelListingsContainer.innerHTML = ''; // List clear karein if (hotels.length === 0) { hotelListingsContainer.innerHTML = '
+        <p class="text-gray-400 text-center md:col-span-2">No hotels found matching your criteria.</p>'; return; } hotels.forEach(hotel => { renderHotelCard(hotel, hotel.id); }); safeCreateIcons(); // FIX: lucide.createIcons() ko safely call karein } // Ek single hotel card banata hai function renderHotelCard(hotel,
+        id) { const card = document.createElement('div'); card.className = 'bg-gray-800 rounded-lg shadow-md overflow-hidden card-hover border border-gray-700 flex flex-col'; card.innerHTML = `
+        <img src="${hotel.image}" alt="${hotel.name}" class="w-full h-48 object-cover" onerror="this.src='https://placehold.co/600x400/1F2937/D1AD5E?text=Image+Not+Found';">
+        <div class="p-6 flex flex-col flex-grow">
+            <h4 class="font-bold text-xl text-white mb-2">${hotel.name}</h4>
+            <p class="text-gray-400 text-sm mb-4 flex items-center">
+                <i data-lucide="map-pin" class="w-4 h-4 mr-2 text-accent"></i> ${hotel.location}
+            </p>
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg font-semibold text-accent">$${hotel.pricePerNight}<span class="text-sm font-normal text-gray-400">/night</span></span>
+                <span class="text-yellow-500 font-bold flex items-center">
+                            <i data-lucide="star" class="w-4 h-4 mr-1 fill-yellow-500"></i> ${hotel.rating}
+                        </span>
+            </div>
+            <button class="w-full btn-primary px-5 py-2 rounded-lg transition shadow-md mt-auto">
+                        Register Now
+                    </button>
+        </div>
+        `; card.querySelector('button').addEventListener('click', () => { showRegistrationModal(hotel, id); }); hotelListingsContainer.appendChild(card); } // Ek single booking card banata hai function renderBookingCard(booking, id) { const card = document.createElement('div');
+        card.className = 'bg-gray-800 border border-gray-700 p-4 rounded-lg shadow-sm'; card.innerHTML = `
+        <h4 class="font-semibold text-accent">${booking.hotelName}</h4>
+        <p class="text-sm text-gray-300"><strong>Check-in:</strong> ${booking.checkIn}</p>
+        <p class="text-sm text-gray-300"><strong>Check-out:</strong> ${booking.checkOut}</p>
+        <p class="text-sm text-gray-300 mt-1"><strong>Total:</strong> $${booking.totalPrice} (${booking.nights} nights)</p>
+        `; myRegistrationsContainer.appendChild(card); } // --- Registration Modal Functions --- function showRegistrationModal(hotel, id) { regModalHotelName.textContent = hotel.name; regModalHotelId.value = id; regModalHotelPrice.value = hotel.pricePerNight;
+        regForm.reset(); regModalMessage.textContent = ''; confirmBookingBtn.disabled = false; confirmBookingBtn.textContent = 'Confirm Registration'; if (heroCheckInInput.value) checkInInput.value = heroCheckInInput.value; if (heroCheckOutInput.value)
+        checkOutInput.value = heroCheckOutInput.value; const today = new Date().toISOString().split('T')[0]; checkInInput.min = today; if (checkInInput.value) { let minCheckout = new Date(checkInInput.value); minCheckout.setDate(minCheckout.getDate()
+        + 2); // JS date objects are 0-indexed, +1 day checkOutInput.min = minCheckout.toISOString().split('T')[0]; } else { checkOutInput.min = today; } checkInInput.addEventListener('change', () => { if (checkInInput.value) { let minCheckout = new Date(checkInInput.value);
+        minCheckout.setDate(minCheckout.getDate() + 2); // +1 day buffer checkOutInput.min = minCheckout.toISOString().split('T')[0]; checkOutInput.value = ''; // Reset check-out } }); regModal.style.display = 'flex'; setTimeout(() => { regModal.style.opacity
+        = 1; regModal.querySelector('.modal-content').style.transform = 'translateY(0)'; }, 10); safeCreateIcons(); // FIX: Safely call } function hideRegistrationModal() { regModal.style.opacity = 0; regModal.querySelector('.modal-content').style.transform
+        = 'translateY(-20px)'; setTimeout(() => { regModal.style.display = 'none'; }, 300); } function showRegModalMessage(text, isError = false) { regModalMessage.textContent = text; regModalMessage.className = `text-sm text-center mt-4 ${isError ? 'text-red-400'
+        : 'text-green-400'}`; } // --- AI Planner Modal Functions --- const showAiModal = () => { aiModal.style.display = 'flex'; setTimeout(() => { aiModal.style.opacity = 1; aiModal.querySelector('.modal-content').style.transform = 'translateY(0)';
+        }, 10); safeCreateIcons(); // FIX: Safely call }; const hideAiModal = () => { aiModal.style.opacity = 0; aiModal.querySelector('.modal-content').style.transform = 'translateY(-20px)'; setTimeout(() => { aiModal.style.display = 'none'; }, 300);
+        }; // AI se mile text ko HTML me format karta hai function formatText(text) { text = text.replace(/(\n\*|\n-)/g, '\n\n$1'); let html = text .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') .replace(/\*(.*?)\*/g, '<em>$1</em>'); let blocks
+        = html.split('\n\n'); return blocks.map(block => { if (block.trim() === '') return ''; if (block.startsWith('# ')) return `
+        <h1>${block.substring(2).trim()}</h1>`; if (block.startsWith('## ')) return `
+        <h2>${block.substring(3).trim()}</h2>`; if (block.startsWith('### ')) return `
+        <h3>${block.substring(4).trim()}</h3>`; if (block.startsWith('* ') || block.startsWith('- ')) { let items = block.split('\n').map(item => `
+        <li>${item.replace(/^[\*\-] /g, '').trim()}</li>`).join(''); return `
+        <ul>${items}</ul>`; } return `
+        <p>${block.replace(/\n/g, '<br>').trim()}</p>`; }).join(''); } // Gemini API ko call karta hai itinerary ke liye async function generateItinerary(destination, duration, retries = 3, delay = 1000) { const userQuery = `Create a detailed ${duration}-day
+        luxury travel itinerary for ${destination}. Focus on unique cultural experiences, fine dining, and relaxation. Provide suggestions for each day in a well-structured format. Use Markdown for formatting headings (##), lists (*), and bold text (**).`;
+        const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`; const payload = { contents: [{ parts: [{ text: userQuery }] }], tools: [{ "google_search":
+        {} }], }; try { const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { if (response.status === 429 && retries > 0) { await new Promise(res =>
+        setTimeout(res, delay)); return generateItinerary(destination, duration, retries - 1, delay * 2); } throw new Error(`API request failed with status ${response.status}: ${response.statusText}`); } return await response.json(); } catch (error) {
+        if (retries > 0) { await new Promise(res => setTimeout(res, delay)); return generateItinerary(destination, duration, retries - 1, delay * 2); } throw error; } } // --- FIREBASE-DEPENDENT FUNCTIONS (Ye tabhi chalengi jab `db` load hoga) --- //
+        Registration form submit hone par async function handleRegistrationSubmit(event) { event.preventDefault(); // --- OFFLINE CHECK --- if (!db) { showRegModalMessage("Registrations are disabled in offline mode.", true); return; } confirmBookingBtn.disabled
+        = true; confirmBookingBtn.innerHTML = '
+        <div class="loader !w-6 !h-6 !border-2 mx-auto"></div>'; regModalMessage.textContent = ''; const hotelId = regModalHotelId.value; const hotelName = regModalHotelName.textContent; const checkIn = checkInInput.value; const checkOut = checkOutInput.value; const price = regModalHotelPrice.value;
+        if (!checkIn || !checkOut) { showRegModalMessage("Please select both dates.", true); confirmBookingBtn.disabled = false; confirmBookingBtn.textContent = 'Confirm Registration'; return; } if (new Date(checkOut)
+        <=n ew Date(checkIn)) { showRegModalMessage( "Check-out date must be after check-in date.", true); confirmBookingBtn.disabled=f alse; confirmBookingBtn.textContent='Confirm Registration' ; return; } const date1=n ew Date(checkIn); const date2=n ew Date(checkOut);
+            const diffTime=M ath.abs(date2 - date1); const nights=M ath.ceil(diffTime / (1000 * 60 * 60 * 24)); const totalPrice=n ights * parseFloat(price); try { const newBooking={ userId: userId, hotelId: hotelId, hotelName: hotelName, checkIn: checkIn,
+            checkOut: checkOut, nights: nights, totalPrice: totalPrice, pricePerNight: parseFloat(price), createdAt: new Date().toISOString() }; // Firestore me save karein (ab `addDoc` aur `collection` defined hain) const bookingsCollectionRef=c ollection(db,
+            "artifacts", appId, "users", userId, "bookings"); await addDoc(bookingsCollectionRef, newBooking); showRegModalMessage( "Registration successful!", false); setTimeout(()=> { hideRegistrationModal(); regForm.reset(); }, 1500); } catch (error) { console.error("Error adding booking: ", error); showRegModalMessage("Registration failed. Please try again.", true); } finally { if (!regModalMessage.textContent.includes("successful"))
+            { confirmBookingBtn.disabled = false; confirmBookingBtn.textContent = 'Confirm Registration'; } } } // Online bookings ko listen karta hai function listenForBookings() { if (!userId || !db) return; // Agar offline hai toh exit const bookingsCollectionRef
+            = collection(db, "artifacts", appId, "users", userId, "bookings"); onSnapshot(bookingsCollectionRef, (snapshot) => { myRegistrationsContainer.innerHTML = ''; if (snapshot.empty) { myRegistrationsContainer.appendChild(noBookingsMsg); noBookingsMsg.style.display
+            = 'block'; return; } noBookingsMsg.style.display = 'none'; const docs = snapshot.docs.sort((a, b) => new Date(b.data().createdAt) - new Date(a.data().createdAt)); docs.forEach((doc) => { renderBookingCard(doc.data(), doc.id); }); safeCreateIcons();
+            // FIX: Safely call }, (error) => { console.error("Error listening for bookings: ", error); myRegistrationsContainer.innerHTML = '
+            <p class="text-red-400 text-center">Error loading bookings.</p>'; }); } // --- Online Features ko Load karne ka Function --- async function initializeOnlineFeatures() { try { // --- DYNAMIC IMPORTS: Firebase libraries ko dynamically load karein --- const { initializeApp } =
+            await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"); const { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"); const
+            firestore = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"); // Global variables ko assign karein addDoc = firestore.addDoc; collection = firestore.collection; onSnapshot = firestore.onSnapshot; setLogLevel
+            = firestore.setLogLevel; // --- Firebase-specific functions --- function setupAuthentication() { onAuthStateChanged(auth, async (user) => { if (user) { userId = user.uid; document.getElementById('user-id-display').textContent = userId; listenForBookings();
+            // Online bookings ko listen karein safeCreateIcons(); // FIX: Safely call } else { signIn(); } }); } async function signIn() { try { if (typeof __initial_auth_token !== 'undefined') { await signInWithCustomToken(auth, __initial_auth_token);
+            } else { await signInAnonymously(auth); } } catch (error) { console.error("Authentication Error:", error); } } // --- Backend ko Initialize Karein --- if (Object.keys(firebaseConfig).length > 0 && typeof __firebase_config !== 'undefined')
+            { const app = initializeApp(firebaseConfig); db = firestore.getFirestore(app); auth = getAuth(app); setLogLevel('Debug'); document.getElementById('app-id-display').textContent = appId; setupAuthentication(); // Auth setup ko call karein }
+            else { throw new Error("No Firebase config found."); } } catch (error) { // --- CATCH (Agar user offline hai ya import fail hota hai) --- console.warn("Could not load online features. Running in offline-only mode.", error); document.getElementById('app-id-display').textContent
+            = "demo-app-id (Offline)"; document.getElementById('user-id-display').textContent = "demo-user-id (Offline)"; document.getElementById('my-registrations-container').innerHTML = '
+            <p class="text-gray-400 text-center p-4">Registrations are disabled in offline mode.</p>'; } } // --- PAGE INITIALIZATION (Jab DOM load ho jaaye) --- document.addEventListener('DOMContentLoaded', () => { // --- Saare DOM elements ko assign karein --- hotelListingsContainer = document.getElementById('hotel-listings-container');
+            myRegistrationsContainer = document.getElementById('my-registrations-container'); noBookingsMsg = document.getElementById('no-bookings-msg'); regModal = document.getElementById('registration-modal'); closeRegModalBtn = document.getElementById('close-reg-modal-btn');
+            regForm = document.getElementById('registration-form'); regModalHotelName = document.getElementById('reg-modal-hotel-name'); regModalHotelId = document.getElementById('reg-modal-hotel-id'); regModalHotelPrice = document.getElementById('reg-modal-hotel-price');
+            checkInInput = document.getElementById('check-in-date'); checkOutInput = document.getElementById('check-out-date'); regModalMessage = document.getElementById('reg-modal-message'); confirmBookingBtn = document.getElementById('confirm-booking-btn');
+            searchHotelsBtn = document.getElementById('search-hotels-btn'); heroCheckInInput = document.getElementById('hero-check-in'); heroCheckOutInput = document.getElementById('hero-check-out'); planTripBtn = document.getElementById('plan-trip-btn');
+            aiModal = document.getElementById('ai-planner-modal'); closeAiModalBtn = document.getElementById('close-ai-modal-btn'); itineraryContent = document.getElementById('itinerary-content'); destinationInput = document.getElementById('destination-input');
+            safeCreateIcons(); // FIX: Initial icon render ko safely call karein // --- FIX: Offline hotels ko turant load karein --- loadOfflineHotels(); // --- Saare event listeners ko attach karein --- // Hotel Search Button searchHotelsBtn.addEventListener('click',
+            () => { const destination = destinationInput.value.trim().toLowerCase(); if (!destination) { renderHotelList(allHotels); // Search khaali hai toh sab dikhayein return; } const filteredHotels = allHotels.filter(hotel => hotel.location.toLowerCase().includes(destination)
+            ); renderHotelList(filteredHotels); }); // Registration Modal Listeners closeRegModalBtn.addEventListener('click', hideRegistrationModal); regModal.addEventListener('click', (e) => { if (e.target === regModal) hideRegistrationModal(); });
+            regForm.addEventListener('submit', handleRegistrationSubmit); // Ye ab safe hai // AI Planner Modal Listeners closeAiModalBtn.addEventListener('click', hideAiModal); aiModal.addEventListener('click', (e) => { if (e.target === aiModal) hideAiModal();
+            }); // "Plan My Trip" Button Listener planTripBtn.addEventListener('click', async () => { const destination = destinationInput.value.trim(); const checkInVal = heroCheckInInput.value; const checkOutVal = heroCheckOutInput.value; let duration
+            = 0; if (checkInVal && checkOutVal) { try { const date1 = new Date(checkInVal); const date2 = new Date(checkOutVal); if (date2
+            <=d ate1) { itineraryContent.innerHTML=` <div class="prose prose-invert max-w-none">
+                <p class="text-red-400">Check-out date must be after the check-in date.</p>
+                </div>`; showAiModal(); return; } const diffTime = Math.abs(date2 - date1); duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); } catch (e) { console.error("Invalid date format:", e); } } if (!destination || duration === 0) { itineraryContent.innerHTML
+                = `
+                <div class="prose prose-invert max-w-none">
+                    <p class="text-red-400">Please enter a destination, a valid check-in date, and a valid check-out date for your trip.</p>
+                </div>`; showAiModal(); return; } itineraryContent.innerHTML = '
+                <div class="loader"></div>'; showAiModal(); try { const response = await generateItinerary(destination, duration); const text = response.candidates?.[0]?.content?.parts?.[0]?.text; if (text) { itineraryContent.innerHTML = `
+                <div class="prose prose-invert max-w-none">${formatText(text)}</div>`; } else { itineraryContent.innerHTML = `
+                <div class="prose prose-invert max-w-none">
+                    <p class="text-red-400">Sorry, we couldn't generate an itinerary at this time. Please try again later.</p>
+                </div>`; } } catch (error) { console.error("Error generating itinerary:", error); itineraryContent.innerHTML = `
+                <div class="prose prose-invert max-w-none">
+                    <p class="text-red-400">An error occurred: ${error.message}</p>
+                </div>`; } safeCreateIcons(); // FIX: Safely call }); // --- Aakhir me, online features load karne ki koshish karein --- initializeOnlineFeatures(); });
+
+    </script>
+
+</body>
+
+</html>
